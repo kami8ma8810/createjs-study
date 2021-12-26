@@ -10,22 +10,132 @@
       // Stageオブジェクトを作成します（舞台のようなもの）
       var stage = new createjs.Stage("myCanvas");
 
-      // 円を作成します
-      var shape = new createjs.Shape();
-      shape.graphics.beginFill("DarkRed"); // 赤色で描画するように設定
-      shape.graphics.drawCircle(0, 0, 100); //半径 100px の円を描画
-      shape.x = 200; // X 座標 200px の位置に配置
-      shape.y = 200; // Y 座標 200px の位置に配置
-      stage.addChild(shape); // 表示リストに追加
+      // // 円を作成します
+      // var shape = new createjs.Shape();
+      // shape.graphics.beginFill("DarkRed"); // 赤色で描画するように設定
+      // shape.graphics.drawCircle(0, 0, 100); //半径 100px の円を描画
+      // shape.x = 200; // X 座標 200px の位置に配置
+      // shape.y = 200; // Y 座標 200px の位置に配置
 
-      // Stageの描画を更新します
-      stage.update();
+      // // チェーンメソッドでもOK
+      // // 赤い円・青い円・緑の円
+      // shape.graphics.beginFill("red").drawCircle(100, 100, 50).beginFill("green").drawCircle(200, 100, 50).beginFill("blue").drawCircle(300, 100, 50);
+
+      // shape.graphics.beginFill("black"); // 赤色で描画するように設定
+      // shape.graphics.drawRect(0, 0, 200, 100); // 長方形を描画
+
+      // // 表示リストに追加
+      // stage.addChild(shape);
+      // // Stageの描画を更新します
+      // stage.update();
+
+      // 画像の作成
+      // Stageオブジェクトを作成。表示リストのルートになります
+      var stage = new createjs.Stage("myCanvas");
+
+      // 画像を作成します
+      var bmp1 = new createjs.Bitmap("./sample.png");
+      bmp1.x = 100;
+      bmp1.y = 20;
+      stage.addChild(bmp1);
+
+      // ===================================
+      // 画像の回転
+      // ===================================
+      // var bmp2 = new createjs.Bitmap("./sample.png");
+      // bmp2.regX = 100;
+      // bmp2.regY = 50;
+      // bmp2.x = 400;
+      // bmp2.y = 100;
+      // stage.addChild(bmp2);
+
+      // // tick イベントを監視します
+      // createjs.Ticker.timingMode = createjs.Ticker.RAF;
+      // createjs.Ticker.on("tick", handleTick);
+
+      // function handleTick() {
+      //   bmp1.rotation += 2;
+      //   bmp2.rotation += 2;
+      //   // Stageの描画を更新します
+      //   stage.update();
+      // }
+
+      // ===================================
+      // コンテナー(グループの親)を作成
+      // ===================================
+      var container = new createjs.Container();
+      container.x = 0;
+      container.y = 0;
+      stage.addChild(container); // 画面に追加
+
+      // 1つ目の円を作成
+      var circle1 = new createjs.Shape();
+      circle1.graphics.beginFill("DarkRed").drawCircle(0, 0, 50);
+      circle1.y = 100;
+
+      // 2つ目の円を作成
+      var circle2 = new createjs.Shape();
+      circle2.graphics.beginFill("Blue").drawCircle(0, 0, 50);
+      circle2.y = 300;
+
+      // 2つの円を親に追加
+      container.addChild(circle1);
+      container.addChild(circle2);
+
+      createjs.Ticker.addEventListener("tick", handleTick);
+
+      function handleTick() {
+        // 親(container)だけを移動
+        container.x += 50;
+        if (container.x > 960) { // 画面端まで移動したら、元に戻す
+          container.x = 0;
+        }
+        stage.update();
+      }
+
+
+      // コンテナー(グループの親)を作成
+      var rotateContainer = new createjs.Container();
+      rotateContainer.x = 300;
+      rotateContainer.y = 300;
+      stage.addChild(rotateContainer); // 画面に追加
+
+      // ループ分で10回
+      for (var i = 0; i < 10; i++) {
+        // 円を作成し
+        var ball = new createjs.Shape();
+        ball.graphics
+          .beginFill("DarkRed")
+          .drawCircle(0, 0, 50);
+        // 円周上に配置
+        ball.x = 200 * Math.sin(i * 360 / 10 * Math.PI / 180);
+        ball.y = 200 * Math.cos(i * 360 / 10 * Math.PI / 180);
+        // グループに追加
+        rotateContainer.addChild(ball);
+      }
+
+      // デフォルトでは1秒間に24回の頻度(24FPS)でtickイベントが発生します。
+      createjs.Ticker.addEventListener("tick", handleTickRotate);
+      // createjs.Ticker.addEventListener("tick", stage);
+
+      // Ticker のインターバルを変更
+      // createjs.Ticker.framerate = 60;
+
+      // ブラウザに応じて最も滑らかに表示する方法
+      createjs.Ticker.timingMode = createjs.Ticker.RAF;
+
+      function handleTickRotate() {
+        // 親だけを回転
+        rotateContainer.rotation += 1;
+        // stage.update();
+        console.log(new Date());
+      }
     }
   </script>
 </head>
 
 <body>
-  <canvas id="myCanvas" width="640" height="320"></canvas>
+  <canvas id="myCanvas" width="1000" height="1000"></canvas>
 </body>
 
 </html>
